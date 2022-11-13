@@ -6,9 +6,13 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     EditText etId;
@@ -18,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
     UniversityDB universityDBHelper;
     Cursor data;
     SQLiteDatabase universityDB;
+    ArrayList<String> dataArray = new ArrayList<>();
+    ArrayAdapter<String> dataArrayAdapter;
+    ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +37,10 @@ public class MainActivity extends AppCompatActivity {
         Button btnRead = findViewById(R.id.btnRead);
         Button btnUpdate = findViewById(R.id.btnUpdate);
         Button btnDelete = findViewById(R.id.btnDelete);
-
+        Button btnShow = findViewById(R.id.btnShow);
+        listView = findViewById(R.id.listView);
+        dataArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataArray);
+        listView.setAdapter(dataArrayAdapter);
         etId = findViewById(R.id.etId);
         etName = findViewById(R.id.etName);
         tvId = findViewById(R.id.tvId);
@@ -46,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             universityDB = universityDBHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("id", etId.getText().toString());
-            values.put("name", etId.getText().toString());
+            values.put("name", etName.getText().toString());
             universityDB.insert("students", null, values);
             universityDB.close();
         });
@@ -82,14 +92,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         btnDelete.setOnClickListener(view -> {
-            universityDB.delete("students", "id = ?", new String[]{tvId.getText().toString()});
+            universityDB.delete("students", "id = ?", new String[]{etId.getText().toString()});
         });
         btnUpdate.setOnClickListener(view -> {
             ContentValues values = new ContentValues();
-            values.put("name", etId.getText().toString());
-            universityDB.update("students", values, "id = ?", new String[]{tvId.getText().toString()});
+            values.put("name", etName.getText().toString());
+            universityDB.update("students", values, "id = ?", new String[]{etId.getText().toString()});
         });
+        btnShow.setOnClickListener(view -> {
+            if (data.moveToFirst()) {
+                int Count = data.getCount();
+                for (int i = 0; i < Count; i++) {
+                    data.moveToNext();
+                    dataArray.add(data.getString(i).toString());
+                }
+            }
 
+            dataArrayAdapter.notifyDataSetChanged();
+        });
 
     }
 }
