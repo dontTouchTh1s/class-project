@@ -1,7 +1,5 @@
 package com.example.classproject;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
@@ -92,19 +92,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         btnDelete.setOnClickListener(view -> {
-            universityDB.delete("students", "id = ?", new String[]{etId.getText().toString()});
+            universityDB.delete("students", "id = ?", new String[]{tvId.getText().toString()});
         });
         btnUpdate.setOnClickListener(view -> {
             ContentValues values = new ContentValues();
             values.put("name", etName.getText().toString());
-            universityDB.update("students", values, "id = ?", new String[]{etId.getText().toString()});
+            universityDB.update("students", values, "id = ?", new String[]{tvId.getText().toString()});
         });
         btnShow.setOnClickListener(view -> {
+            dataArray.clear();
             if (data.moveToFirst()) {
                 int Count = data.getCount();
                 for (int i = 0; i < Count; i++) {
+                    dataArray.add(data.getString(0) + ": " + data.getString(1));
+
                     data.moveToNext();
-                    dataArray.add(data.getString(i).toString());
                 }
             }
 
